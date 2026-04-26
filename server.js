@@ -2,15 +2,19 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const bodyParser = require('body-parser');
+const csrf = require('csurf');
+const cookieParser = require('cookie-parser');
 
 const app = express();
 app.use(bodyParser.json());
+app.use(cookieParser());
+app.use(csrf({ cookie: true }));
 
 // Vulnerability 1: Weak bcrypt rounds
 const SALT_ROUNDS = 1;
 
 // Vulnerability 2: JWT with 'none' algorithm allowed
-const JWT_SECRET = 'secret';
+const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret-change-in-production';
 
 const users = [];
 
